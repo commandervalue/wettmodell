@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Commander Value – Live</title>
+    <style>
+        body {
+            background-color: #111;
+            color: #00f2ff;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #00ffee;
+        }
+        button {
+            background-color: #00f2ff;
+            color: black;
+            border: none;
+            padding: 15px;
+            font-size: 1.2rem;
+            border-radius: 6px;
+            width: 100%;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        #output {
+            margin-top: 20px;
+            background: #222;
+            padding: 15px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>⚡ Commander Value – Live Test</h1>
+    <p>Live-Spielstand & Statistiken (Testdaten von API-Football)</p>
+
+    <button onclick="getGame()">🔄 Abrufen</button>
+
+    <div id="output">Bereit für Einsatz...</div>
+
+    <script>
+        async function getGame() {
+            const response = await fetch("https://v3.football.api-sports.io/fixtures?live=all", {
+                method: "GET",
+                headers: {
+                    "x-apisports-key": "75830951f069790f41e9e84227815368"
+                }
+            });
+            const data = await response.json();
+            const output = document.getElementById("output");
+
+            if (!data.response || data.response.length === 0) {
+                output.innerHTML = "⚠️ Keine Live-Spiele gefunden";
+                return;
+            }
+
+            const game = data.response[0];
+            const fixture = game.fixture;
+            const teams = game.teams;
+            const goals = game.goals;
+            const status = fixture.status.elapsed;
+
+            output.innerHTML = `
+                <strong>${teams.home.name} vs. ${teams.away.name}</strong><br>
+                Spielminute: <strong>${status}'</strong><br>
+                Spielstand: <strong>${goals.home} - ${goals.away}</strong>
+            `;
+        }
+    </script>
+</body>
+</html>
